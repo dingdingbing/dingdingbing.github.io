@@ -5,6 +5,7 @@ export default defineConfig({
   description: 'Java 后端项目经验、问题排查与知识沉淀',
   cleanUrls: true,
   lastUpdated: true,
+  srcExclude: ['superpowers/**'],
   themeConfig: {
     siteTitle: 'Ding Junhui',
     search: {
