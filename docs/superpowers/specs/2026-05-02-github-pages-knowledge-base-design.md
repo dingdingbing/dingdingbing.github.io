@@ -107,7 +107,8 @@ docs/
 │   ├── index.md
 │   └── reconciliation.md
 └── engineering/
-    └── index.md
+    ├── index.md
+    └── code-review-and-verification.md
 ```
 
 ## 首页内容
@@ -231,6 +232,7 @@ docs/
 - 数据一致性或对账类问题排查。
 - Spring 事务失效场景总结。
 - 业务数据对账与修复经验。
+- 代码评审与验证闭环。
 
 ## 验收标准
 

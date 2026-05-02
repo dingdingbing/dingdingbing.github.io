@@ -38,6 +38,7 @@ Create or modify these files:
 - Create: `docs/database/index.md` - database knowledge map.
 - Create: `docs/database/reconciliation.md` - reconciliation article.
 - Create: `docs/engineering/index.md` - engineering practice overview.
+- Create: `docs/engineering/code-review-and-verification.md` - engineering practice article about review and verification closure.
 - Create: `.github/workflows/deploy.yml` - GitHub Pages deployment workflow.
 
 ---

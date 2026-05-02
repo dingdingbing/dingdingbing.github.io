@@ -39,3 +39,4 @@ features:
 - [数据一致性问题排查](/troubleshooting/data-consistency)
 - [Spring 事务失效场景](/backend/spring-transaction)
 - [业务数据对账与修复](/database/reconciliation)
+- [代码评审与验证闭环](/engineering/code-review-and-verification)
