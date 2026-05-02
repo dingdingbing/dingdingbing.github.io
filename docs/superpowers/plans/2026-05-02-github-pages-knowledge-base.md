@@ -59,9 +59,12 @@ Create `package.json`:
   "private": true,
   "type": "module",
   "scripts": {
-    "docs:dev": "vitepress dev docs --host 0.0.0.0",
+    "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs --host 0.0.0.0"
+    "docs:preview": "vitepress preview docs"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
 ```
@@ -75,6 +78,7 @@ node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
 .DS_Store
+.omx/
 .env
 .env.*
 npm-debug.log*
@@ -97,7 +101,7 @@ Expected:
 added packages
 ```
 
-`package-lock.json` should be created and `package.json` should contain a `devDependencies.vitepress` entry.
+`package-lock.json` should be created. `package.json` should contain a `devDependencies.vitepress` entry, and the lockfile root package entry should include `engines.node >=18`.
 
 - [ ] **Step 4: Verify npm scripts are visible**
 
@@ -898,7 +902,7 @@ Automate publishing through GitHub Pages
 Run:
 
 ```bash
-npm run docs:preview -- --port 4173
+npm run docs:preview -- --port 4173 --host 127.0.0.1
 ```
 
 Expected:
