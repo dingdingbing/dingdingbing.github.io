@@ -1,11 +1,41 @@
 import { defineConfig } from 'vitepress'
 
+const translateGeneratedText = (code: string) =>
+  code
+    .replaceAll('Main Navigation', '主导航')
+    .replaceAll('extra navigation', '更多导航')
+    .replaceAll('mobile navigation', '移动端导航')
+    .replaceAll('Sidebar Navigation', '侧边栏导航')
+    .replaceAll('Pager', '分页导航')
+    .replaceAll('toggle section', '切换章节')
+    .replaceAll('go to home', '返回首页')
+
 export default defineConfig({
+  lang: 'zh-CN',
   title: 'Ding Junhui 技术知识库',
   description: 'Java 后端项目经验、问题排查与知识沉淀',
   cleanUrls: true,
   lastUpdated: true,
   srcExclude: ['superpowers/**'],
+  transformHtml(code) {
+    return translateGeneratedText(code)
+  },
+  vite: {
+    plugins: [
+      {
+        name: 'translate-vitepress-default-theme-labels',
+        generateBundle(_, bundle) {
+          for (const chunk of Object.values(bundle)) {
+            if (chunk.type === 'chunk') {
+              chunk.code = translateGeneratedText(chunk.code)
+            } else if (typeof chunk.source === 'string') {
+              chunk.source = translateGeneratedText(chunk.source)
+            }
+          }
+        }
+      }
+    ]
+  },
   themeConfig: {
     siteTitle: 'Ding Junhui',
     outline: { label: '本页目录' },
