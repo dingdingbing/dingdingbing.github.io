@@ -9,6 +9,7 @@ const translateGeneratedText = (code: string) =>
     .replaceAll('Pager', '分页导航')
     .replaceAll('toggle section', '切换章节')
     .replaceAll('go to home', '返回首页')
+    .replaceAll('Permalink to', '复制标题链接')
 
 export default defineConfig({
   lang: 'zh-CN',
