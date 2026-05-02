@@ -5,4 +5,4 @@
 ## 精选项目
 
 - [复杂提货链路设计与排查](/projects/delivery-chain)
-- [mall-agent 业务系统实践](/projects/mall-agent)
+- [业务路由系统实践](/projects/business-routing)

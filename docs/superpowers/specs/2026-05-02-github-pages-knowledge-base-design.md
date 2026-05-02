@@ -91,7 +91,7 @@ docs/
 ├── projects/
 │   ├── index.md
 │   ├── delivery-chain.md
-│   └── mall-agent.md
+│   └── business-routing.md
 ├── troubleshooting/
 │   ├── index.md
 │   └── data-consistency.md
@@ -227,7 +227,7 @@ docs/
 推荐第一批文章方向：
 
 - 复杂业务链路设计与排查经验。
-- mall-agent 或类似业务系统实践。
+- 业务路由系统实践。
 - 数据一致性或对账类问题排查。
 - Spring 事务失效场景总结。
 - 业务数据对账与修复经验。
@@ -264,4 +264,3 @@ docs/
 - 不做评论系统。
 - 不批量公开导入语雀原始笔记。
 - 不在知识结构可用之前投入过多个人品牌视觉设计。
-

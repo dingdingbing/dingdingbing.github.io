@@ -26,7 +26,7 @@ Create or modify these files:
 - Create: `docs/about.md` - public profile and technical positioning.
 - Create: `docs/projects/index.md` - project experience overview.
 - Create: `docs/projects/delivery-chain.md` - first project experience article.
-- Create: `docs/projects/mall-agent.md` - second project experience article.
+- Create: `docs/projects/business-routing.md` - second project experience article.
 - Create: `docs/troubleshooting/index.md` - troubleshooting overview.
 - Create: `docs/troubleshooting/data-consistency.md` - first troubleshooting article.
 - Create: `docs/backend/index.md` - Java backend knowledge map.
@@ -182,7 +182,7 @@ export default defineConfig({
           items: [
             { text: '项目经验总览', link: '/projects/' },
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
-            { text: 'mall-agent 业务系统实践', link: '/projects/mall-agent' }
+            { text: '业务路由系统实践', link: '/projects/business-routing' }
           ]
         }
       ],
@@ -380,7 +380,7 @@ Create `docs/projects/index.md`:
 ## 精选项目
 
 - [复杂提货链路设计与排查](/projects/delivery-chain)
-- [mall-agent 业务系统实践](/projects/mall-agent)
+- [业务路由系统实践](/projects/business-routing)
 ```
 
 Create `docs/troubleshooting/index.md`:
@@ -492,7 +492,7 @@ Shape the public knowledge base skeleton
 
 **Files:**
 - Create: `docs/projects/delivery-chain.md`
-- Create: `docs/projects/mall-agent.md`
+- Create: `docs/projects/business-routing.md`
 - Create: `docs/troubleshooting/data-consistency.md`
 - Create: `docs/backend/spring-transaction.md`
 - Create: `docs/backend/mybatis.md`
@@ -536,14 +536,14 @@ Create `docs/projects/delivery-chain.md`:
 复杂业务链路的问题不能只看单表或单接口。更可靠的方式是先建立业务对象地图，再用数据证据确认每个环节是否符合预期。
 ```
 
-Create `docs/projects/mall-agent.md`:
+Create `docs/projects/business-routing.md`:
 
 ```markdown
-# mall-agent 业务系统实践
+# 业务路由系统实践
 
 ## 背景
 
-业务系统经常需要在不同入口、不同模式和不同主体之间做路由判断。mall-agent 类系统的价值在于把请求入口、业务规则和后续处理链路连接起来。
+业务系统经常需要在不同入口、不同模式和不同主体之间做路由判断。业务路由模块的价值在于把请求入口、业务规则和后续处理链路连接起来。
 
 ## 我的职责
 

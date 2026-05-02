@@ -28,7 +28,7 @@ export default defineConfig({
           items: [
             { text: '项目经验总览', link: '/projects/' },
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
-            { text: 'mall-agent 业务系统实践', link: '/projects/mall-agent' }
+            { text: '业务路由系统实践', link: '/projects/business-routing' }
           ]
         }
       ],
