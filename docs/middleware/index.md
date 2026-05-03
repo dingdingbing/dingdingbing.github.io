@@ -5,4 +5,4 @@
 ## 文章
 
 - [Redis 实践](/middleware/redis)
-- [MQ 实践](/middleware/mq)
+- [RabbitMQ 面试复盘](/middleware/mq)
