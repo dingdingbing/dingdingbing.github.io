@@ -209,8 +209,290 @@ ACK 表示消费成功，RabbitMQ 可以删除消息。NACK 或 reject 表示消
 
 选型时不要只比较性能数字，要看业务需要的是可靠投递、复杂路由、高吞吐、事件回放，还是事务消息。
 
+## 选型追问：不要只背结论
+
+面试里直接说“Kafka 强在日志流和回放，RabbitMQ 强在灵活路由，RocketMQ 强在事务、延时、顺序和堆积”，这句话不是错，但很容易被继续追问。
+
+更稳的回答方式是：不要说某个 MQ 独占某个能力，而是说它的底层模型让这类能力更自然、成本更低、限制更少。
+
+### Kafka 为什么更适合日志流和回放？
+
+Kafka 的核心模型更像一段可持久化的追加日志：
+
+```text
+Topic -> Partition -> Append-only Log -> Offset
+```
+
+消息写入 partition 后，会按顺序追加到日志里。消费者不是把消息“取走”，而是通过 offset 记录自己消费到哪里。只要消息还在保留期内，消费者就可以从指定 offset 重新消费。
+
+所以 Kafka 的回放能力是很自然的：
+
+```text
+消费者 A 消费到 offset 100
+消费者 B 可以从 offset 0 开始
+消费者 C 可以从 offset 500 开始
+消费者 A 也可以重置 offset 重新消费历史数据
+```
+
+日志、埋点、链路追踪适合 Kafka，是因为这类数据通常具备这些特点：
+
+- 数据量大，请求、点击、接口调用都会产生事件。
+- 主要是追加写，通常不会频繁修改历史日志。
+- 多个系统会订阅同一批数据，比如监控、告警、数仓、搜索、风控。
+- 下游逻辑变化或故障恢复时，经常需要回放历史数据。
+- 日志通常需要保留一段时间，而不是消费成功就立即删除。
+
+RabbitMQ 也可以传日志，但传统 queue 模型更像投递系统：
+
+```text
+消息投递给消费者 -> 消费者 ack -> broker 可以删除消息
+```
+
+所以不要说“只有 Kafka 能回放”，而要说：
+
+> Kafka 把回放作为核心消费模型的一部分；其他 MQ 可以通过消息回溯、重投、死信队列或 stream 模式实现类似效果，但在经典模型下，Kafka 做日志流和回放更自然。
+
+### RabbitMQ 的灵活路由，其他 MQ 不能做吗？
+
+不是不能做。区别在于 RabbitMQ 把路由做成了非常显式的一层：
+
+```text
+Producer -> Exchange -> Binding -> Queue -> Consumer
+```
+
+Producer 不一定关心消息最终进入哪个队列，只需要发给 Exchange。Exchange 再根据类型、routing key 和 binding 关系把消息路由到一个或多个 Queue。
+
+Kafka 也能做类似分发，但更多依赖 Topic、Partition 和 Consumer Group：
+
+- 广播：多个 consumer group 订阅同一个 topic。
+- 分类：拆 topic，或者消费者自己过滤。
+- 分区：producer 根据 key 决定写入哪个 partition。
+
+RocketMQ 也能做类似分发，常见方式是 Topic、Tag 和 Consumer Group。
+
+所以更稳的表达是：
+
+> 不是 Kafka 或 RocketMQ 不能做业务分发，而是 RabbitMQ 的 Exchange/Binding 模型把路由作为 broker 层的一等能力。复杂业务分发时，direct、fanout、topic 可以很直观地表达精确路由、广播和通配符路由。
+
+### RocketMQ 的事务、延时、顺序为什么更像业务消息能力？
+
+RocketMQ 不是“所有能力都比 RabbitMQ 强”，而是它把一些业务消息场景做成了更明确的产品能力。
+
+事务消息解决的是本地业务事务和消息发送之间的最终一致性；顺序消息强调同一个 message group 内部有序；延时消息是消息类型能力，而不是主要依赖 TTL + 死信队列绕出来。
+
+这些能力在 RabbitMQ 或 Kafka 里也能通过组合方案实现一部分，但实现成本、语义清晰度和边界条件不同。
+
+一版更抗追问的选型回答可以这样说：
+
+> 我不会说某个 MQ 独占某个能力，而是看它的核心模型让什么事情成本更低。Kafka 的模型是 partitioned log，消息在保留期内不会因为某个消费者消费成功就删除，消费者通过 offset 管理进度，所以更适合高吞吐、多订阅、可回放的日志流。RabbitMQ 的 Exchange、Binding、Queue 模型把路由作为 broker 层的一等能力，所以复杂业务分发表达更直接。RocketMQ 则更偏业务消息能力，事务消息是 half message + 本地事务 + commit/rollback + 事务回查，顺序消息是 message group 级别的局部顺序，延时消息也是内建消息类型。选型看的是模型和场景匹配，而不是谁绝对更强。
+
+## 事务追问：RabbitMQ 事务和 RocketMQ 事务消息有什么区别？
+
+这个问题很容易混淆，因为两边都叫“事务”，但解决的问题并不一样。
+
+### RabbitMQ 的事务是什么？
+
+RabbitMQ 的事务是 AMQP channel 级别的事务。channel 可以理解成 TCP 连接里的逻辑通道，生产、消费、ack 等操作大多都发生在 channel 上。
+
+RabbitMQ 事务大概是这样：
+
+```java
+channel.txSelect();
+
+channel.basicPublish(...);
+channel.basicPublish(...);
+
+channel.txCommit();
+// 或者 channel.txRollback();
+```
+
+它解决的是：
+
+```text
+当前 channel 上的一批 publish、ack 等 broker 操作，要不要在 RabbitMQ 侧提交。
+```
+
+它不包含数据库事务，也不负责让 MySQL 和 RabbitMQ 一起提交或一起回滚。
+
+所以 RabbitMQ 的事务边界是：
+
+```text
+应用程序 <-> RabbitMQ Broker
+```
+
+不是：
+
+```text
+数据库 <-> 应用程序 <-> RabbitMQ Broker
+```
+
+对于单条消息发送，实际项目里通常更常用 publisher confirm 确认 Broker 是否收到消息，而不是使用 RabbitMQ 事务。RabbitMQ 事务模式开销更大，也解决不了数据库事务和消息发送之间的双写一致性。
+
+### 为什么不能在数据库事务里直接发 MQ？
+
+如果在事务方法中间发送 MQ：
+
+```java
+@Transactional
+public void createOrder() {
+    orderMapper.insert(order);
+
+    rabbitTemplate.convertAndSend("order.created", orderEvent);
+
+    doSomethingMayFail();
+}
+```
+
+后续逻辑一旦抛异常，数据库事务会回滚，但消息可能已经发出去了。消费者收到的是一条实际上没有成立的业务事件。
+
+这个问题可以用 Spring 的事务同步机制缓解，把发送 MQ 放到事务提交后的回调里：
+
+```java
+@Transactional
+public void createOrder() {
+    orderMapper.insert(order);
+
+    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+        @Override
+        public void afterCommit() {
+            rabbitTemplate.convertAndSend("order.created", orderEvent);
+        }
+    });
+}
+```
+
+`afterCommit` 解决的是：
+
+```text
+只有数据库事务真的提交成功后，才发送 MQ，避免事务回滚但消息已经发出的情况。
+```
+
+但它没有解决另一个空隙：
+
+```text
+1. 数据库事务 commit 成功
+2. 准备进入 afterCommit 发送 MQ
+3. 应用宕机 / 网络失败 / RabbitMQ 不可用
+4. 消息没有发出去
+```
+
+这时数据库已经成功，但下游收不到消息，仍然是双写不一致。
+
+### RabbitMQ 场景怎么解决提交成功但消息未发？
+
+RabbitMQ 场景里，更稳的方案是本地消息表，也叫 Outbox Pattern。
+
+核心思想是：
+
+```text
+业务数据 + 待发送消息记录
+放在同一个数据库事务里提交
+```
+
+示例：
+
+```java
+@Transactional
+public void createOrder() {
+    orderMapper.insert(order);
+
+    outboxMessageMapper.insert(new OutboxMessage(
+            "ORDER_CREATED",
+            order.getId(),
+            serialize(orderEvent),
+            "INIT"
+    ));
+}
+```
+
+事务提交后，由后台任务扫描待发送消息：
+
+```text
+1. 查询 INIT / FAILED / 长时间未确认的消息
+2. 发送到 RabbitMQ
+3. 收到 publisher confirm 的 ack 后，标记为 SENT
+4. 收到 nack 或发送异常，记录失败原因和重试次数
+5. 定时任务继续补发
+```
+
+这个方案的关键不是“发送前写一条记录”，而是：
+
+```text
+业务数据和待发送消息记录在同一个数据库事务里落库。
+```
+
+只要数据库提交成功，待发送消息就一定也在数据库里。即使应用在发送 MQ 前宕机，重启后也能根据 outbox 表继续补发。
+
+消费者侧还要配合：
+
+- 手动 ack：业务处理成功后再 ack。
+- 幂等消费：基于业务唯一键、消费记录表、数据库唯一索引或状态机防重复。
+- 死信队列：多次失败后进入死信，避免无限重试阻塞主队列。
+- 数据对账：作为最后兜底，发现极端异常后补偿。
+
+一版好记的链路是：
+
+```text
+事务回滚误发：afterCommit 解决。
+事务提交未发：本地消息表解决。
+Broker 是否收到：publisher confirm 解决。
+消费者是否成功：手动 ack 解决。
+重复投递问题：消费幂等解决。
+极端异常漏网：数据对账兜底。
+```
+
+### RocketMQ 事务消息解决的是什么？
+
+RocketMQ 的事务消息解决的也是本地业务事务和消息发送之间的最终一致性，但它的方式和 RabbitMQ + 本地消息表不同。
+
+RocketMQ 的大致流程是：
+
+```text
+1. Producer 先发送 half message 到 Broker
+2. Broker 保存 half message，但暂时不投递给消费者
+3. Producer 执行本地事务
+4. 本地事务成功 -> commit 事务消息
+5. 本地事务失败 -> rollback 事务消息
+6. Producer 异常或状态未知 -> Broker 回查本地事务状态
+```
+
+这里的“本地事务”通常就是业务系统里的数据库事务，比如插入订单、更新支付状态、生成业务单据。它不是 MQ 自己单独开的数据库事务，也不是 MySQL 和 RocketMQ 的强一致二阶段提交。
+
+RocketMQ 事务消息真正绑定的是：
+
+```text
+本地事务结果
+和
+消息最终是否对消费者可见
+```
+
+如果本地事务提交成功，就提交 half message，让消费者可见；如果本地事务回滚，就回滚 half message，让消费者看不到这条消息。
+
+如果生产者在提交或回滚信号发给 Broker 前宕机，Broker 会进行事务状态回查。生产者根据本地数据库状态返回 commit、rollback 或 unknown。
+
+所以更准确的表达是：
+
+> RocketMQ 不是把消息发送真正融合进数据库事务里，而是通过 half message 把消息可见性延后到本地事务结果确定之后，再通过事务回查处理生产者异常导致的未知状态。
+
+### RabbitMQ 事务和 RocketMQ 事务消息的区别
+
+| 对比 | RabbitMQ 事务 | RocketMQ 事务消息 |
+| --- | --- | --- |
+| 事务范围 | 当前 channel 上的 broker 操作 | 本地业务事务和消息可见性 |
+| 是否包含数据库事务 | 不包含 | 通常配合数据库事务结果使用 |
+| 解决的问题 | 一批 publish/ack 操作提交或回滚 | 数据库事务和消息发送的最终一致性 |
+| 消息是否先隐藏 | 不是核心机制 | half message 先对消费者不可见 |
+| 是否有事务回查 | 没有业务事务回查机制 | Broker 可以回查 producer 本地事务状态 |
+| 常见使用 | 较少，更多使用 publisher confirm | 订单、支付、交易等最终一致性场景 |
+
+面试时可以这样回答：
+
+> RabbitMQ 也有事务，但它是 AMQP channel 级别的 broker 操作事务，主要控制当前 channel 上 publish、ack 这类操作的提交和回滚。它不包含数据库事务，所以不能直接解决本地数据库事务和消息发送之间的双写一致性。RabbitMQ 场景里通常用 afterCommit 避免回滚误发，再用本地消息表加 publisher confirm 解决提交成功但消息未发的问题。
+>
+> RocketMQ 的事务消息解决的是业务本地事务和消息发送的最终一致性。它先发送 half message，这条消息对消费者不可见；然后执行本地事务，本地事务通常就是数据库事务。如果本地事务成功，就 commit 消息，让消费者可见；如果失败，就 rollback 消息。如果生产者异常宕机，Broker 会回查生产者，根据本地事务状态决定提交、回滚或稍后再查。
+
 ## 总结
 
-RabbitMQ 面试回答不能只背“削峰、解耦、异步”。更稳的回答方式是：先讲业务价值，再讲 RabbitMQ 模型，最后补上可靠性、幂等、延时、积压和顺序这些真实落地问题。
+RabbitMQ 面试回答不能只背“削峰、解耦、异步”。更稳的回答方式是：先讲业务价值，再讲 RabbitMQ 模型，最后补上可靠性、幂等、延时、积压、顺序和事务一致性这些真实落地问题。
 
 如果回答里能体现“机制 + 风险 + 取舍”，面试官会更容易判断你不是只背概念，而是真的知道 MQ 在项目里会怎么出问题、怎么兜底。

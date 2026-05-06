@@ -4,5 +4,6 @@
 
 ## 文章
 
+- [Spring AI 音乐智能体学习复盘](/backend/spring-ai-music-agent)
 - [Spring 事务失效场景](/backend/spring-transaction)
 - [MyBatis 实践](/backend/mybatis)
