@@ -121,7 +121,7 @@ export default defineConfig({
           text: '中间件',
           items: [
             { text: '中间件实践总览', link: '/middleware/' },
-            { text: 'Redis 实践', link: '/middleware/redis' },
+            { text: 'Redis 面试复盘', link: '/middleware/redis' },
             { text: 'RabbitMQ 面试复盘', link: '/middleware/mq' }
           ]
         }
