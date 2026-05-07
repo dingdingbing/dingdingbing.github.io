@@ -217,7 +217,23 @@ Heap dump 对 Metaspace OOM 只能提供间接线索，例如：
 
 下午问题再次出现，这次拿到了完整 dump。通过 MAT 分析，根因不是前一天变更，而是一段历史查询逻辑。
 
+![MAT suspect overview: 单个请求线程持有大对象数组](/images/troubleshooting/oom/mat-suspect-overview.png)
+
+_MAT suspects report 指向一个 Tomcat 请求线程持有了大量本地变量，其中核心对象是一个接近 2GB 的 `Object[]`。这个报告不是最终结论，但给出了继续沿线程栈和 retained heap 往下查的方向。_
+
 异常数据导致查询条件失效，最终执行了近似全表查询。百万级数据从数据库返回后，被 JDBC/MyBatis 映射成 Java 对象，并放入 `List` 持有。
+
+![MAT retained heap: ArrayList 持有 Object 数组](/images/troubleshooting/oom/mat-retained-heap.png)
+
+_沿最短引用路径继续展开，可以看到 `ArrayList` 的 `elementData` 持有大规模 `Object[]`，并被 HTTP 请求线程保留。这说明问题不是零散小对象泄漏，而是一次请求把大量查询结果装进集合后无法释放。_
+
+![MAT thread stack: JDBC 读取结果集](/images/troubleshooting/oom/mat-jdbc-result-read.png)
+
+_线程栈显示请求仍停留在 MySQL JDBC 读取结果集的链路上，说明 dump 生成时应用还在从数据库读取或转换大量结果行。_
+
+![MAT stack excerpt: MyBatis selectList 调用链](/images/troubleshooting/oom/mat-selectlist-stack.png)
+
+_继续向上看调用链，可以看到 MyBatis / MyBatis-Plus 的 `selectList` 路径。公开文章里裁掉了内部业务包名，但保留了“无边界列表查询”这个关键证据。_
 
 这类对象在当前请求处理链路上仍然可达，GC 无法回收，最终导致堆内存被打满。
 
