@@ -101,7 +101,8 @@ export default defineConfig({
           text: '问题排查',
           items: [
             { text: '问题排查总览', link: '/troubleshooting/' },
-            { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' }
+            { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
+            { text: '生产环境 OOM 排查复盘', link: '/troubleshooting/production-oom' }
           ]
         }
       ],
