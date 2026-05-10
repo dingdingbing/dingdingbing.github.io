@@ -132,6 +132,7 @@ export default defineConfig({
           text: '数据库',
           items: [
             { text: '数据库知识地图', link: '/database/' },
+            { text: 'MySQL 面试复盘', link: '/database/mysql-interview-review' },
             { text: '业务数据对账与修复', link: '/database/reconciliation' }
           ]
         }
