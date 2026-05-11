@@ -112,6 +112,7 @@ export default defineConfig({
           items: [
             { text: 'Java 后端知识地图', link: '/backend/' },
             { text: 'Spring AI 音乐智能体学习复盘', link: '/backend/spring-ai-music-agent' },
+            { text: 'Spring 面试复盘', link: '/backend/spring-interview-review' },
             { text: 'Spring 事务失效场景', link: '/backend/spring-transaction' },
             { text: 'MyBatis 实践', link: '/backend/mybatis' }
           ]
