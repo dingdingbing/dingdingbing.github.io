@@ -4,4 +4,5 @@
 
 ## 文章
 
+- [MySQL 面试复盘：我的回答与纠错](/database/mysql-interview-review)
 - [业务数据对账与修复](/database/reconciliation)
