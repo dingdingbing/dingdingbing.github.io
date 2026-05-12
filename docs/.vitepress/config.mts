@@ -14,7 +14,7 @@ const translateGeneratedText = (code: string) =>
 export default defineConfig({
   lang: 'zh-CN',
   title: 'Ding Junhui 技术知识库',
-  description: 'Java 后端项目经验、问题排查与知识沉淀',
+  description: 'Java 后端项目经验、问题排查、工程实践与应用场景模拟面经',
   cleanUrls: true,
   lastUpdated: true,
   srcExclude: ['superpowers/**'],
@@ -77,29 +77,51 @@ export default defineConfig({
     },
     nav: [
       { text: '首页', link: '/' },
-      { text: '项目经验', link: '/projects/' },
-      { text: '问题排查', link: '/troubleshooting/' },
+      { text: '项目与排查', link: '/experience/' },
       { text: 'Java 后端', link: '/backend/' },
       { text: '中间件', link: '/middleware/' },
       { text: '数据库', link: '/database/' },
       { text: '工程实践', link: '/engineering/' },
-      { text: '关于我', link: '/about' }
+      { text: '应用场景', link: '/scenarios/' },
+      { text: '我', link: '/about' }
     ],
     sidebar: {
-      '/projects/': [
+      '/experience/': [
         {
-          text: '项目经验',
+          text: '项目与问题排查',
           items: [
+            { text: '总览', link: '/experience/' },
             { text: '项目经验总览', link: '/projects/' },
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
-            { text: '业务路由系统实践', link: '/projects/business-routing' }
+            { text: '业务路由系统实践', link: '/projects/business-routing' },
+            { text: '问题排查总览', link: '/troubleshooting/' },
+            { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
+            { text: '生产环境 OOM 排查复盘', link: '/troubleshooting/production-oom' }
+          ]
+        }
+      ],
+      '/projects/': [
+        {
+          text: '项目与问题排查',
+          items: [
+            { text: '总览', link: '/experience/' },
+            { text: '项目经验总览', link: '/projects/' },
+            { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
+            { text: '业务路由系统实践', link: '/projects/business-routing' },
+            { text: '问题排查总览', link: '/troubleshooting/' },
+            { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
+            { text: '生产环境 OOM 排查复盘', link: '/troubleshooting/production-oom' }
           ]
         }
       ],
       '/troubleshooting/': [
         {
-          text: '问题排查',
+          text: '项目与问题排查',
           items: [
+            { text: '总览', link: '/experience/' },
+            { text: '项目经验总览', link: '/projects/' },
+            { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
+            { text: '业务路由系统实践', link: '/projects/business-routing' },
             { text: '问题排查总览', link: '/troubleshooting/' },
             { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
             { text: '生产环境 OOM 排查复盘', link: '/troubleshooting/production-oom' }
@@ -111,9 +133,9 @@ export default defineConfig({
           text: 'Java 后端',
           items: [
             { text: 'Java 后端知识地图', link: '/backend/' },
-            { text: 'Spring AI 音乐智能体学习复盘', link: '/backend/spring-ai-music-agent' },
-            { text: 'Spring 面试复盘', link: '/backend/spring-interview-review' },
+            { text: 'Spring Bean 生命周期与线程池关闭', link: '/backend/spring-bean-lifecycle-threadpool-shutdown' },
             { text: 'Spring 事务失效场景', link: '/backend/spring-transaction' },
+            { text: 'Spring 面试复盘', link: '/backend/spring-interview-review' },
             { text: 'MyBatis 实践', link: '/backend/mybatis' }
           ]
         }
@@ -122,7 +144,7 @@ export default defineConfig({
         {
           text: '中间件',
           items: [
-            { text: '中间件实践总览', link: '/middleware/' },
+            { text: '中间件知识地图', link: '/middleware/' },
             { text: 'Redis 面试复盘', link: '/middleware/redis' },
             { text: 'RabbitMQ 面试复盘', link: '/middleware/mq' }
           ]
@@ -143,13 +165,27 @@ export default defineConfig({
           text: '工程实践',
           items: [
             { text: '工程实践总览', link: '/engineering/' },
-            { text: '代码评审与验证闭环', link: '/engineering/code-review-and-verification' }
+            { text: 'Spring AI 音乐智能体学习复盘', link: '/engineering/spring-ai-music-agent' },
+            { text: '代码评审与验证', link: '/engineering/code-review-and-verification' }
+          ]
+        }
+      ],
+      '/scenarios/': [
+        {
+          text: '应用场景模拟面经',
+          items: [
+            { text: '模块说明', link: '/scenarios/' },
+            { text: 'Hikari 连接池与数据库连接数', link: '/scenarios/hikari-connection-pool' },
+            { text: '后端系统性能瓶颈推演', link: '/scenarios/performance-bottlenecks' },
+            { text: '后端性能优化场景', link: '/scenarios/performance-optimization' },
+            { text: '技术选型横向对比', link: '/scenarios/technology-comparison' },
+            { text: 'Spring Boot / Spring Cloud 组件模块梳理', link: '/scenarios/spring-components' }
           ]
         }
       ]
     },
     footer: {
-      message: '持续沉淀后端项目经验、问题排查方法和工程实践。',
+      message: '持续沉淀后端项目经验、问题排查方法、工程实践和应用场景模拟面经。',
       copyright: 'Copyright © 2026 Ding Junhui'
     }
   }
