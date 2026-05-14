@@ -5,6 +5,7 @@
 ## 已整理内容
 
 - [Spring 面试复盘：基础、AOP、事务、容器源码、MVC 与 Boot](/backend/spring-interview-review)
+- [Java 基础知识](/backend/java-basic-knowledge)
 - [Spring Bean 生命周期与线程池 / JVM 关闭机制知识整理](/backend/spring-bean-lifecycle-threadpool-shutdown)
 - [Spring 事务失效场景](/backend/spring-transaction)
 - [MyBatis 实践](/backend/mybatis)
