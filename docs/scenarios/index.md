@@ -33,5 +33,6 @@
 - [Hikari 连接池与数据库连接数](/scenarios/hikari-connection-pool)
 - [后端系统性能瓶颈推演](/scenarios/performance-bottlenecks)
 - [后端性能优化场景](/scenarios/performance-optimization)
+- [采购结算合同批量打印性能优化实战](/scenarios/purchase-contract-batch-print-optimization)
 - [技术选型横向对比](/scenarios/technology-comparison)
 - [Spring Boot / Spring Cloud 组件模块梳理](/scenarios/spring-components)

@@ -179,6 +179,7 @@ export default defineConfig({
             { text: 'Hikari 连接池与数据库连接数', link: '/scenarios/hikari-connection-pool' },
             { text: '后端系统性能瓶颈推演', link: '/scenarios/performance-bottlenecks' },
             { text: '后端性能优化场景', link: '/scenarios/performance-optimization' },
+            { text: '采购结算合同批量打印性能优化实战', link: '/scenarios/purchase-contract-batch-print-optimization' },
             { text: '技术选型横向对比', link: '/scenarios/technology-comparison' },
             { text: 'Spring Boot / Spring Cloud 组件模块梳理', link: '/scenarios/spring-components' }
           ]
