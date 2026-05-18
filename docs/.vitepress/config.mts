@@ -134,6 +134,8 @@ export default defineConfig({
           items: [
             { text: 'Java 后端知识地图', link: '/backend/' },
             { text: 'Java 基础知识', link: '/backend/java-basic-knowledge' },
+            { text: '计算机网络基础', link: '/backend/computer-network' },
+            { text: '操作系统基础', link: '/backend/operating-system' },
             { text: 'Spring Bean 生命周期与线程池关闭', link: '/backend/spring-bean-lifecycle-threadpool-shutdown' },
             { text: 'Spring 事务失效场景', link: '/backend/spring-transaction' },
             { text: 'Spring 面试复盘', link: '/backend/spring-interview-review' },

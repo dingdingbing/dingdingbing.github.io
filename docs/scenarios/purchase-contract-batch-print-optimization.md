@@ -359,7 +359,7 @@ List<byte[]> contents = futures.stream()
 
 这次优化方向是对的，也确实解决了生产问题，但代码层面还有几个值得继续改进的地方。
 
-### 不足一：失败任务被吞掉，可能生成缺合同的合并 PDF
+### 不足一：异常处理要和业务语义对齐
 
 当前代码中，单个任务异常后：
 
@@ -379,11 +379,15 @@ List<byte[]> contents = futures.stream()
         .collect(Collectors.toList());
 ```
 
-这会带来一个很严重的业务风险：48 份合同中如果 1 份失败，最终可能合并 47 份并返回成功。
+这段代码最大的问题不是“允许部分失败”，而是失败结果没有结构化表达。它只是把失败任务变成 `null`，再把 `null` 过滤掉。
 
-更稳的做法是：合同批量打印应该强一致，少一份也不能算成功。
+如果 68 份合同里有 10 份失败，最终接口只返回了 58 份合并后的 PDF，但没有告诉用户哪 10 份失败、为什么失败，这就会变成静默丢失。
 
-可以至少做数量校验：
+更合理的做法是先明确业务语义，再决定异常策略。
+
+#### 场景一：全成功才算成功
+
+如果业务要求“批量打印结果必须完整”，少一份合同都不能给用户返回成功文件，那么可以在收集结果后做数量校验：
 
 ```java
 if (contents.size() != purchaseSettleContractPreViewVOS.size()) {
@@ -391,7 +395,309 @@ if (contents.size() != purchaseSettleContractPreViewVOS.size()) {
 }
 ```
 
-更好的做法是返回任务结果对象，记录失败合同号和失败原因。
+这种策略适合强完整性场景，例如打印结果要作为归档文件、审批附件、财务凭证，不能允许用户拿到缺页文件。
+
+#### 场景二：允许部分成功
+
+如果业务语义是“合同之间互不影响，成功的合同不要浪费，失败的合同提示出去即可”，就不应该让一个合同失败拖垮全部任务。
+
+这种场景下也不应该返回 `null`，而是让每个任务返回结构化结果：
+
+```java
+@Data
+@AllArgsConstructor
+public class ContractPrintResult {
+    private Long contractId;
+    private String contractCode;
+    private boolean success;
+    private byte[] content;
+    private String errorMessage;
+
+    public static ContractPrintResult success(Long contractId, String contractCode, byte[] content) {
+        return new ContractPrintResult(contractId, contractCode, true, content, null);
+    }
+
+    public static ContractPrintResult fail(Long contractId, String contractCode, String errorMessage) {
+        return new ContractPrintResult(contractId, contractCode, false, null, errorMessage);
+    }
+}
+```
+
+每个 `CompletableFuture` 内部自己捕获异常，并返回失败结果：
+
+```java
+List<CompletableFuture<ContractPrintResult>> futures = contracts.stream()
+        .map(contract -> CompletableFuture.supplyAsync(() -> {
+            try {
+                String fileUrl = generateContract(contract, templateId, mainId);
+                if (CharSequenceUtil.isBlank(fileUrl)) {
+                    return ContractPrintResult.fail(
+                            contract.getId(),
+                            contract.getContractCode(),
+                            "合同生成失败"
+                    );
+                }
+
+                byte[] content = DownloadUtil.getBytes(PRE_URL + fileUrl);
+                return ContractPrintResult.success(
+                        contract.getId(),
+                        contract.getContractCode(),
+                        content
+                );
+            } catch (Exception e) {
+                log.error("合同打印失败，contractId={}", contract.getId(), e);
+                return ContractPrintResult.fail(
+                        contract.getId(),
+                        contract.getContractCode(),
+                        e.getMessage()
+                );
+            }
+        }, executor))
+        .collect(Collectors.toList());
+```
+
+统一 `join()` 后再拆分成功和失败结果：
+
+```java
+List<ContractPrintResult> results = futures.stream()
+        .map(CompletableFuture::join)
+        .collect(Collectors.toList());
+
+List<byte[]> successContents = results.stream()
+        .filter(ContractPrintResult::isSuccess)
+        .map(ContractPrintResult::getContent)
+        .collect(Collectors.toList());
+
+List<ContractPrintResult> failedResults = results.stream()
+        .filter(result -> !result.isSuccess())
+        .collect(Collectors.toList());
+
+if (successContents.isEmpty()) {
+    throw new CommonException("合同批量打印失败，未生成可合并的合同文件");
+}
+
+String mergedFileUrl = uploadMergedContracts(successContents);
+```
+
+最终返回给前端的就不只是一个 URL，而应该包含成功数量和失败明细：
+
+```text
+批量打印 68 份合同
+成功：58 份
+失败：10 份
+文件地址：mergedFileUrl
+失败明细：合同号 + 失败原因
+```
+
+这种方式的好处是：
+
+- 成功的合同继续合并打印，不浪费本次操作；
+- 失败合同不会静默消失；
+- 前端可以明确提示“部分成功”；
+- 后续可以基于失败明细做单独重试。
+
+#### 场景三：后台任务化处理
+
+如果批量数量继续变大，或者失败后需要重试、补偿、人工下载历史文件，那么接口不应该一直同步等待。
+
+更稳的方式是返回任务 ID：
+
+```text
+POST /contract-print/tasks
+返回：taskId
+```
+
+后台任务异步生成文件，并记录状态：
+
+```text
+PROCESSING：生成中
+SUCCESS：全部成功
+PARTIAL_SUCCESS：部分成功
+FAILED：全部失败
+```
+
+这样即使页面关闭、网关超时，用户也可以通过任务记录拿到已生成文件和失败明细。
+
+#### get 和 join 遇到异常时返回什么？
+
+如果 `CompletableFuture` 里的异常没有被处理：
+
+```java
+CompletableFuture<byte[]> future = CompletableFuture.supplyAsync(() -> {
+    throw new RuntimeException("合同生成失败");
+});
+```
+
+调用 `join()` 时不会返回正常结果，而是抛出 `CompletionException`：
+
+```java
+future.join();
+```
+
+```text
+java.util.concurrent.CompletionException: java.lang.RuntimeException: 合同生成失败
+```
+
+调用 `get()` 时也不会返回正常结果，而是抛出 `ExecutionException`：
+
+```java
+future.get();
+```
+
+```text
+java.util.concurrent.ExecutionException: java.lang.RuntimeException: 合同生成失败
+```
+
+也就是说，异常发生时 `get()` 和 `join()` 都不会返回 `byte[]`。区别在于异常包装和方法签名：
+
+```text
+join()：抛 CompletionException，是运行时异常，不强制 try-catch
+get()：抛 ExecutionException / InterruptedException，是受检异常，必须显式处理
+```
+
+如果用了 `exceptionally` 并返回兜底值：
+
+```java
+CompletableFuture<byte[]> future = CompletableFuture
+        .supplyAsync(() -> {
+            throw new RuntimeException("合同生成失败");
+        })
+        .exceptionally(e -> null);
+```
+
+这时异常已经被消费掉了，再调用：
+
+```java
+future.join();
+```
+
+返回结果就是：
+
+```text
+null
+```
+
+所以真正危险的不是 `join()`，而是 `exceptionally(e -> null)` 配合 `filter(Objects::nonNull)`，它会让失败合同从结果中消失。
+
+如果业务允许部分成功，推荐返回失败结果对象：
+
+```java
+.exceptionally(e -> ContractPrintResult.fail(contractId, contractCode, getMessage(e)))
+```
+
+这样异常被处理了，但失败信息没有丢。
+
+#### get 和 join 还有哪些区别？
+
+除了异常包装不同，`get()` 和 `join()` 还有几个使用层面的差异。
+
+第一，方法来源不同。
+
+`get()` 来自 `Future` 接口，`CompletableFuture` 因为实现了 `Future`，所以也有 `get()`：
+
+```java
+V get() throws InterruptedException, ExecutionException;
+```
+
+`join()` 是 `CompletableFuture` 自己提供的方法：
+
+```java
+T join();
+```
+
+所以普通的 `Future`、`FutureTask` 只有 `get()`，没有 `join()`。
+
+第二，代码风格不同。
+
+因为 `get()` 抛的是受检异常，所以在 Stream 里使用会比较别扭：
+
+```java
+List<byte[]> contents = futures.stream()
+        .map(future -> {
+            try {
+                return future.get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new CommonException("合同打印任务被中断");
+            } catch (ExecutionException e) {
+                throw new CommonException("合同打印任务执行失败");
+            }
+        })
+        .collect(Collectors.toList());
+```
+
+而 `join()` 不强制处理受检异常，所以批量聚合结果时更简洁：
+
+```java
+List<byte[]> contents = futures.stream()
+        .map(CompletableFuture::join)
+        .collect(Collectors.toList());
+```
+
+第三，超时能力不同。
+
+`get()` 有带超时时间的重载：
+
+```java
+future.get(3, TimeUnit.SECONDS);
+```
+
+超时后会抛出：
+
+```text
+TimeoutException
+```
+
+`join()` 本身没有超时参数。如果使用 `CompletableFuture` 做超时控制，一般使用：
+
+```java
+future.orTimeout(3, TimeUnit.SECONDS).join();
+```
+
+或者给一个默认值：
+
+```java
+future.completeOnTimeout(defaultContent, 3, TimeUnit.SECONDS).join();
+```
+
+第四，中断语义不同。
+
+`get()` 等待时如果当前线程被中断，会抛出 `InterruptedException`。通常 catch 后要恢复中断标记：
+
+```java
+try {
+    return future.get();
+} catch (InterruptedException e) {
+    Thread.currentThread().interrupt();
+    throw new CommonException("合同打印任务被中断");
+}
+```
+
+`join()` 不抛 `InterruptedException`，代码写起来更顺，但也更容易让人忽略线程中断。
+
+第五，适用场景不同。
+
+如果是 `CompletableFuture` 编排任务，并且已经统一提交了所有任务，最后只是收集结果，`join()` 更自然：
+
+```java
+List<ContractPrintResult> results = futures.stream()
+        .map(CompletableFuture::join)
+        .collect(Collectors.toList());
+```
+
+如果需要显式处理超时、中断，或者拿到的是普通 `Future`，`get()` 更合适：
+
+```java
+ContractPrintResult result = future.get(5, TimeUnit.SECONDS);
+```
+
+简单总结：
+
+```text
+get 更严谨，适合需要显式处理中断和超时的场景；
+join 更简洁，适合 CompletableFuture 编排和结果聚合，
+但要小心异常包装和中断语义被隐藏。
+```
 
 ### 不足二：线程池不应该每次请求临时创建
 
@@ -562,10 +868,43 @@ parallelStream 代码最短，但默认使用 ForkJoinPool.commonPool，不适�
 
 ```text
 join 也会阻塞当前线程。它和 Future.get 都是等待结果。
-主要区别在异常模型：Future.get 会抛 InterruptedException、ExecutionException；
+主要区别在异常模型和中断处理：
+Future.get 会抛 InterruptedException、ExecutionException，是受检异常，必须显式处理；
 CompletableFuture.join 会抛 unchecked 的 CompletionException，不强制 try-catch。
 
 这里不是因为 join 不阻塞才用它，而是因为先把所有 CompletableFuture 创建出来，再统一 join，才能让任务先并发执行起来。
+```
+
+补充：
+
+```text
+如果任务内部异常没有被处理，get 和 join 都不会返回正常结果。
+get 会把异常包装成 ExecutionException；
+join 会把异常包装成 CompletionException。
+
+如果前面用了 exceptionally 返回兜底值，比如 null，
+那么 get/join 拿到的就是这个兜底值，而不是异常。
+这也是 exceptionally return null 容易吞掉失败任务的原因。
+```
+
+`get()` 和 `join()` 还有几个常见区别：
+
+```text
+1. 方法来源不同：
+   get 来自 Future 接口；
+   join 是 CompletableFuture 自己提供的方法。
+
+2. 异常类型不同：
+   get 抛 InterruptedException、ExecutionException、TimeoutException；
+   join 抛 CompletionException、CancellationException。
+
+3. 超时能力不同：
+   get 支持 get(timeout, unit)；
+   join 本身没有 timeout 参数。
+
+4. 中断语义不同：
+   get 等待时如果线程被中断，会抛 InterruptedException，并清除中断标记；
+   join 不抛 InterruptedException，使用时更容易忽略线程中断。
 ```
 
 ### 问题三：为什么不能创建一个 Future 就马上 join？
@@ -577,14 +916,24 @@ CompletableFuture.join 会抛 unchecked 的 CompletionException，不强制 try-
 正确做法是先把所有任务提交到线程池，收集成 List<CompletableFuture>，再统一 join 等待结果。
 ```
 
-### 问题四：如果 48 个合同里有 1 个失败怎么办？
+### 问题四：如果 68 个合同里有 10 个失败怎么办？
 
 我的回答：
 
 ```text
-合同批量打印应该保证结果完整，不能静默丢掉失败合同后继续合并。
-更合理的处理是记录失败合同号和失败原因，让整个批量任务失败，或者在异步任务模式下标记为 PARTIAL_FAILED 并展示失败明细。
-当前代码里 exceptionally 返回 null 再 filter 掉，是后续需要优化的点。
+这个要先看业务语义。
+
+如果要求全成功才算成功，就应该让整个批量任务失败，并返回失败合同号和失败原因。
+
+但如果业务允许部分成功，合同之间也互不影响，那么 68 个合同里 10 个失败时，
+可以把成功的 58 个继续合并成 PDF，失败的 10 个作为失败明细返回给前端提示。
+
+关键是不能 exceptionally 返回 null 后直接 filter 掉。
+这样用户只知道拿到了一个文件，却不知道少了哪些合同。
+我更倾向于让每个 CompletableFuture 返回 ContractPrintResult：
+成功结果包含 PDF 字节；
+失败结果包含合同号和失败原因。
+最终合并成功结果，同时返回失败明细。
 ```
 
 ### 问题五：为什么整体没有快 8 倍？
