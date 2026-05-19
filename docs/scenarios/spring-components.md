@@ -6,6 +6,35 @@
 
 更稳的回答方式是按模块分类：Web、数据访问、事务、缓存、消息、服务治理、配置、网关、容错、链路追踪、监控、安全、任务调度。
 
+## 我们系统里的 starter 依赖
+
+这张图是从项目依赖里按 `starter` 搜出来的结果，能反推出系统实际用到的 Spring Boot / Spring Cloud 能力。
+
+![系统里的 Spring Boot 与 Spring Cloud starter 依赖](/images/scenarios/spring-components/system-starters.svg)
+
+不要按依赖名一条条死背。更容易记住的方式是把它们放回一条后端请求链路里：
+
+```text
+请求入口 -> Web/Tomcat/JSON/Validation
+业务处理 -> AOP/事务/缓存/消息
+数据访问 -> JDBC/MyBatis-Plus/动态数据源
+服务调用 -> Dubbo/OpenFeign/LoadBalancer
+服务治理 -> Consul 注册发现/配置中心
+稳定性 -> Resilience4j/Actuator/Logging/Test
+```
+
+这样看到 `spring-boot-starter-web`，脑子里想到的是“HTTP 入口”；看到 `spring-boot-starter-jdbc` 和 `mybatis-plus-boot-starter`，想到的是“数据库访问”；看到 `spring-cloud-starter-openfeign`，想到的是“HTTP 远程调用”；看到 `spring-cloud-starter-consul-discovery`，想到的是“服务注册发现”。
+
+我自己可以按三层来背：
+
+| 层级 | 这张图里的依赖 | 记忆方式 |
+| --- | --- | --- |
+| 公司封装 | `banksteel-starter-web`、`banksteel-starter-dubbo` | 公司把通用 Web、Dubbo 接入方式封成 starter |
+| Boot 单体能力 | `web`、`jdbc`、`cache`、`amqp`、`aop`、`actuator`、`json`、`logging`、`test` | 一个服务自己能跑起来、能访问数据库、能发消息、能监控 |
+| Cloud 服务治理 | `consul`、`consul-config`、`consul-discovery`、`openfeign`、`loadbalancer`、`resilience4j` | 多个服务之间如何发现、配置、调用、负载和容错 |
+
+面试时不用把版本号背下来，重点背“组件解决什么问题”。版本号只需要知道当前系统大致是 Spring Boot `2.5.2`、Spring Cloud `3.0.3` 这一代。
+
 ## Spring Boot 常用组件
 
 ### Web 模块

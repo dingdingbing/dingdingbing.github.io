@@ -6,3 +6,4 @@
 
 - [Redis 面试复盘](/middleware/redis)
 - [RabbitMQ 面试复盘](/middleware/mq)
+- [分布式锁对比：Redis 和 ZooKeeper](/middleware/distributed-lock)

@@ -149,7 +149,8 @@ export default defineConfig({
           items: [
             { text: '中间件知识地图', link: '/middleware/' },
             { text: 'Redis 面试复盘', link: '/middleware/redis' },
-            { text: 'RabbitMQ 面试复盘', link: '/middleware/mq' }
+            { text: 'RabbitMQ 面试复盘', link: '/middleware/mq' },
+            { text: '分布式锁对比：Redis 和 ZooKeeper', link: '/middleware/distributed-lock' }
           ]
         }
       ],
@@ -159,7 +160,8 @@ export default defineConfig({
           items: [
             { text: '数据库知识地图', link: '/database/' },
             { text: 'MySQL 面试复盘', link: '/database/mysql-interview-review' },
-            { text: '业务数据对账与修复', link: '/database/reconciliation' }
+            { text: '业务数据对账与修复', link: '/database/reconciliation' },
+            { text: '数据库表结构设计规范', link: '/database/table-design-guidelines' }
           ]
         }
       ],
@@ -182,6 +184,8 @@ export default defineConfig({
             { text: '后端系统性能瓶颈推演', link: '/scenarios/performance-bottlenecks' },
             { text: '后端性能优化场景', link: '/scenarios/performance-optimization' },
             { text: '采购结算合同批量打印性能优化实战', link: '/scenarios/purchase-contract-batch-print-optimization' },
+            { text: '自我介绍里的面试钩子设计', link: '/scenarios/interview-self-introduction-hooks' },
+            { text: '奇奇怪怪的应用类问题', link: '/scenarios/strange-application-questions' },
             { text: '技术选型横向对比', link: '/scenarios/technology-comparison' },
             { text: 'Spring Boot / Spring Cloud 组件模块梳理', link: '/scenarios/spring-components' }
           ]

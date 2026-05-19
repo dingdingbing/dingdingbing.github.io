@@ -34,5 +34,7 @@
 - [后端系统性能瓶颈推演](/scenarios/performance-bottlenecks)
 - [后端性能优化场景](/scenarios/performance-optimization)
 - [采购结算合同批量打印性能优化实战](/scenarios/purchase-contract-batch-print-optimization)
+- [自我介绍里的面试钩子设计](/scenarios/interview-self-introduction-hooks)
+- [奇奇怪怪的应用类问题](/scenarios/strange-application-questions)
 - [技术选型横向对比](/scenarios/technology-comparison)
 - [Spring Boot / Spring Cloud 组件模块梳理](/scenarios/spring-components)

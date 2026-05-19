@@ -1,0 +1,4 @@
+interface:
+  display_name: "个人博客部署"
+  short_description: "构建提交推送个人博客并检查 GitHub Pages 部署状态"
+  default_prompt: "发布当前个人博客变更到 GitHub Pages，并检查构建和部署状态。"
