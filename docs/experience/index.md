@@ -20,6 +20,7 @@
 
 ### 问题排查
 
+- [异步方法丢失链路追踪问题解决](/troubleshooting/async-trace-context-loss)
 - [数据一致性问题排查](/troubleshooting/data-consistency)
 - [生产环境 OOM 排查复盘](/troubleshooting/production-oom)
 

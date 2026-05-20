@@ -95,6 +95,7 @@ export default defineConfig({
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
             { text: '业务路由系统实践', link: '/projects/business-routing' },
             { text: '问题排查总览', link: '/troubleshooting/' },
+            { text: '异步方法丢失链路追踪问题解决', link: '/troubleshooting/async-trace-context-loss' },
             { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
             { text: '生产环境 OOM 排查复盘', link: '/troubleshooting/production-oom' }
           ]
@@ -109,6 +110,7 @@ export default defineConfig({
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
             { text: '业务路由系统实践', link: '/projects/business-routing' },
             { text: '问题排查总览', link: '/troubleshooting/' },
+            { text: '异步方法丢失链路追踪问题解决', link: '/troubleshooting/async-trace-context-loss' },
             { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
             { text: '生产环境 OOM 排查复盘', link: '/troubleshooting/production-oom' }
           ]
@@ -123,6 +125,7 @@ export default defineConfig({
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
             { text: '业务路由系统实践', link: '/projects/business-routing' },
             { text: '问题排查总览', link: '/troubleshooting/' },
+            { text: '异步方法丢失链路追踪问题解决', link: '/troubleshooting/async-trace-context-loss' },
             { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
             { text: '生产环境 OOM 排查复盘', link: '/troubleshooting/production-oom' }
           ]
