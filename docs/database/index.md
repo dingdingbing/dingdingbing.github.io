@@ -7,6 +7,7 @@
 - [MySQL 面试复盘](/database/mysql-interview-review)
 - [业务数据对账与修复](/database/reconciliation)
 - [数据库表结构设计规范](/database/table-design-guidelines)
+- [生产环境慢 SQL：优化器选错索引排查复盘](/database/production-slow-sql-wrong-index)
 - [Hikari 连接池与数据库连接数](/scenarios/hikari-connection-pool)
 
 ## 归类规则

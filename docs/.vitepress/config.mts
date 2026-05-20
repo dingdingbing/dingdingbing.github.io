@@ -164,7 +164,8 @@ export default defineConfig({
             { text: '数据库知识地图', link: '/database/' },
             { text: 'MySQL 面试复盘', link: '/database/mysql-interview-review' },
             { text: '业务数据对账与修复', link: '/database/reconciliation' },
-            { text: '数据库表结构设计规范', link: '/database/table-design-guidelines' }
+            { text: '数据库表结构设计规范', link: '/database/table-design-guidelines' },
+            { text: '生产环境慢 SQL 排查复盘', link: '/database/production-slow-sql-wrong-index' }
           ]
         }
       ],
