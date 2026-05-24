@@ -142,7 +142,8 @@ export default defineConfig({
             { text: 'Spring Bean 生命周期与线程池关闭', link: '/backend/spring-bean-lifecycle-threadpool-shutdown' },
             { text: 'Spring 事务失效场景', link: '/backend/spring-transaction' },
             { text: 'Spring 面试复盘', link: '/backend/spring-interview-review' },
-            { text: 'MyBatis 实践', link: '/backend/mybatis' }
+            { text: 'MyBatis 实践', link: '/backend/mybatis' },
+            { text: 'DDD 入门', link: '/backend/domain-driven-design' }
           ]
         }
       ],
@@ -188,6 +189,7 @@ export default defineConfig({
             { text: '后端系统性能瓶颈推演', link: '/scenarios/performance-bottlenecks' },
             { text: '后端性能优化场景', link: '/scenarios/performance-optimization' },
             { text: '采购结算合同批量打印性能优化实战', link: '/scenarios/purchase-contract-batch-print-optimization' },
+            { text: '高可用强一致性的设计思路', link: '/scenarios/high-availability-strong-consistency-design' },
             { text: '自我介绍里的面试钩子设计', link: '/scenarios/interview-self-introduction-hooks' },
             { text: '奇奇怪怪的应用类问题', link: '/scenarios/strange-application-questions' },
             { text: '技术选型横向对比', link: '/scenarios/technology-comparison' },

@@ -11,6 +11,7 @@
 - [Spring Bean 生命周期与线程池 / JVM 关闭机制知识整理](/backend/spring-bean-lifecycle-threadpool-shutdown)
 - [Spring 事务失效场景](/backend/spring-transaction)
 - [MyBatis 实践](/backend/mybatis)
+- [DDD 入门：从三层架构到业务建模](/backend/domain-driven-design)
 
 ## 归类规则
 
