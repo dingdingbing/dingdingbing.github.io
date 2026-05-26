@@ -137,6 +137,9 @@ export default defineConfig({
           items: [
             { text: 'Java 后端知识地图', link: '/backend/' },
             { text: 'Java 基础知识', link: '/backend/java-basic-knowledge' },
+            { text: '自我修复-01：面试回答修正', link: '/backend/self-repair-01' },
+            { text: '加密基础面试复盘', link: '/backend/encryption-interview-review' },
+            { text: '登录认证面试复盘', link: '/backend/authentication-interview-review' },
             { text: '计算机网络基础', link: '/backend/computer-network' },
             { text: '操作系统基础', link: '/backend/operating-system' },
             { text: 'Spring Bean 生命周期与线程池关闭', link: '/backend/spring-bean-lifecycle-threadpool-shutdown' },
@@ -190,6 +193,7 @@ export default defineConfig({
             { text: '后端性能优化场景', link: '/scenarios/performance-optimization' },
             { text: '采购结算合同批量打印性能优化实战', link: '/scenarios/purchase-contract-batch-print-optimization' },
             { text: '高可用强一致性的设计思路', link: '/scenarios/high-availability-strong-consistency-design' },
+            { text: '面试经验-01：HR 面和技术面复盘', link: '/scenarios/interview-experience-01' },
             { text: '自我介绍里的面试钩子设计', link: '/scenarios/interview-self-introduction-hooks' },
             { text: '奇奇怪怪的应用类问题', link: '/scenarios/strange-application-questions' },
             { text: '技术选型横向对比', link: '/scenarios/technology-comparison' },

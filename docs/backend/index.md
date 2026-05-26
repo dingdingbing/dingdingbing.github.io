@@ -6,6 +6,9 @@
 
 - [Spring 面试复盘：基础、AOP、事务、容器源码、MVC 与 Boot](/backend/spring-interview-review)
 - [Java 基础知识](/backend/java-basic-knowledge)
+- [自我修复-01：Java 后端面试回答全链路修正](/backend/self-repair-01)
+- [加密基础面试复盘：对称加密、非对称加密、摘要和签名](/backend/encryption-interview-review)
+- [登录认证面试复盘：Cookie、Session、JWT 和有状态/无状态](/backend/authentication-interview-review)
 - [计算机网络基础：Java 后端面试与线上问题视角](/backend/computer-network)
 - [操作系统基础：Java 后端面试与问题排查视角](/backend/operating-system)
 - [Spring Bean 生命周期与线程池 / JVM 关闭机制知识整理](/backend/spring-bean-lifecycle-threadpool-shutdown)
