@@ -94,6 +94,7 @@ export default defineConfig({
             { text: '项目经验总览', link: '/projects/' },
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
             { text: '业务路由系统实践', link: '/projects/business-routing' },
+            { text: '多主体互转问题复盘', link: '/projects/main-relation-transfer-issue-review' },
             { text: '问题排查总览', link: '/troubleshooting/' },
             { text: '异步方法丢失链路追踪问题解决', link: '/troubleshooting/async-trace-context-loss' },
             { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
@@ -109,6 +110,7 @@ export default defineConfig({
             { text: '项目经验总览', link: '/projects/' },
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
             { text: '业务路由系统实践', link: '/projects/business-routing' },
+            { text: '多主体互转问题复盘', link: '/projects/main-relation-transfer-issue-review' },
             { text: '问题排查总览', link: '/troubleshooting/' },
             { text: '异步方法丢失链路追踪问题解决', link: '/troubleshooting/async-trace-context-loss' },
             { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
@@ -124,6 +126,7 @@ export default defineConfig({
             { text: '项目经验总览', link: '/projects/' },
             { text: '复杂提货链路设计与排查', link: '/projects/delivery-chain' },
             { text: '业务路由系统实践', link: '/projects/business-routing' },
+            { text: '多主体互转问题复盘', link: '/projects/main-relation-transfer-issue-review' },
             { text: '问题排查总览', link: '/troubleshooting/' },
             { text: '异步方法丢失链路追踪问题解决', link: '/troubleshooting/async-trace-context-loss' },
             { text: '数据一致性问题排查', link: '/troubleshooting/data-consistency' },
@@ -179,7 +182,9 @@ export default defineConfig({
           items: [
             { text: '工程实践总览', link: '/engineering/' },
             { text: 'Spring AI 音乐智能体学习复盘', link: '/engineering/spring-ai-music-agent' },
-            { text: '代码评审与验证', link: '/engineering/code-review-and-verification' }
+            { text: '代码评审与验证', link: '/engineering/code-review-and-verification' },
+            { text: '业务系统 Code Review 规范复盘', link: '/engineering/code-review-business-boundary' },
+            { text: 'AI 使用过程中常见的坑', link: '/engineering/ai-usage-pitfalls' }
           ]
         }
       ],
@@ -194,6 +199,8 @@ export default defineConfig({
             { text: '采购结算合同批量打印性能优化实战', link: '/scenarios/purchase-contract-batch-print-optimization' },
             { text: '高可用强一致性的设计思路', link: '/scenarios/high-availability-strong-consistency-design' },
             { text: '面试经验-01：HR 面和技术面复盘', link: '/scenarios/interview-experience-01' },
+            { text: 'JD 一面复盘：从真实经历到面试表达', link: '/scenarios/jd-first-round-interview-review' },
+            { text: '钢银提货助手 Dify 流程地图', link: '/scenarios/dify-delivery-assistant-flow-map' },
             { text: '自我介绍里的面试钩子设计', link: '/scenarios/interview-self-introduction-hooks' },
             { text: '奇奇怪怪的应用类问题', link: '/scenarios/strange-application-questions' },
             { text: '技术选型横向对比', link: '/scenarios/technology-comparison' },

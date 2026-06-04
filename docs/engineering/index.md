@@ -6,6 +6,8 @@
 
 - [Spring AI 音乐智能体学习复盘](/engineering/spring-ai-music-agent)
 - [代码评审与验证](/engineering/code-review-and-verification)
+- [业务系统 Code Review 规范复盘](/engineering/code-review-business-boundary)
+- [AI 使用过程中常见的坑](/engineering/ai-usage-pitfalls)
 
 ## 后续整理方向
 

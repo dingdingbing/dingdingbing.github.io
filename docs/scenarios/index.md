@@ -36,6 +36,8 @@
 - [采购结算合同批量打印性能优化实战](/scenarios/purchase-contract-batch-print-optimization)
 - [高可用强一致性的设计思路](/scenarios/high-availability-strong-consistency-design)
 - [面试经验-01：一次 HR 面和技术面的完整复盘](/scenarios/interview-experience-01)
+- [JD 一面复盘：从真实经历到面试表达](/scenarios/jd-first-round-interview-review)
+- [钢银提货助手 Dify 流程地图](/scenarios/dify-delivery-assistant-flow-map)
 - [自我介绍里的面试钩子设计](/scenarios/interview-self-introduction-hooks)
 - [奇奇怪怪的应用类问题](/scenarios/strange-application-questions)
 - [技术选型横向对比](/scenarios/technology-comparison)

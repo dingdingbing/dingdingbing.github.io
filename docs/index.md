@@ -33,6 +33,7 @@ features:
 - [技术选型横向对比](/scenarios/technology-comparison)：整理分布式锁、MQ、数据库连接池和常见中间件选型对比。
 - [Spring Boot / Spring Cloud 组件模块梳理](/scenarios/spring-components)：按模块梳理常用组件，避免面试时想不起体系。
 - [生产环境 OOM 排查复盘](/troubleshooting/production-oom)：保留 OOM 排查过程和 MAT 截图证据。
+- [AI 使用过程中常见的坑](/engineering/ai-usage-pitfalls)：从一次 AI 初始化项目引发的生产慢 SQL 和事务回滚异常，沉淀 AI 代码准入方法论。
 - [Spring AI 音乐智能体学习复盘](/engineering/spring-ai-music-agent)：放在工程实践里，记录 AI 应用学习链路。
 
 ## 内容方向
