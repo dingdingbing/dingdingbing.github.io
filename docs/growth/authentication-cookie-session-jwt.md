@@ -1,4 +1,4 @@
-# 登录认证面试复盘：Cookie、Session、JWT 和有状态/无状态
+# 登录认证Cookie、Session、JWT
 
 这篇文章来自一次面试复盘。
 
