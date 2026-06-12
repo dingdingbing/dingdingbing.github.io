@@ -7,6 +7,7 @@
 - [生产环境 OOM 排查复盘](/reviews/production-oom)
 - [异步方法丢失链路追踪问题解决](/reviews/async-trace-context-loss)
 - [生产慢 SQL：优化器误选索引排查](/reviews/production-slow-sql-wrong-index)
+- [下游接口请求超时导致数据丢失的复盘](/reviews/downstream-timeout-data-loss-review)
 
 ## 性能与稳定性
 

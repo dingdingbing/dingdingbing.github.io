@@ -12,6 +12,7 @@
 - [Spring Boot / Spring Cloud 组件模块梳理](/growth/spring-components)
 - [MQ&分布式锁技术选型横向对比](/growth/mq-distributed-lock-technology-comparison)
 - [超时&重复&慢怎么办](/growth/timeout-duplicate-slow-questions)
+- [下游不确定接口如何快速失败](/growth/downstream-fast-fail)
 - [系统性能瓶颈与排查](/growth/system-performance-bottlenecks)
 - [高可用强一致性的设计思路](/growth/high-availability-strong-consistency-design)
 - [Hikari 连接池与数据库连接数](/growth/hikari-connection-pool)

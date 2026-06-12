@@ -133,7 +133,8 @@ export default defineConfig({
           items: [
             { text: '生产环境 OOM 排查复盘', link: '/reviews/production-oom' },
             { text: '异步方法丢失链路追踪问题解决', link: '/reviews/async-trace-context-loss' },
-            { text: '生产慢 SQL：优化器误选索引排查', link: '/reviews/production-slow-sql-wrong-index' }
+            { text: '生产慢 SQL：优化器误选索引排查', link: '/reviews/production-slow-sql-wrong-index' },
+            { text: '下游接口请求超时导致数据丢失的复盘', link: '/reviews/downstream-timeout-data-loss-review' }
           ]
         },
         {
@@ -169,6 +170,7 @@ export default defineConfig({
             { text: 'Spring Boot / Spring Cloud 组件模块梳理', link: '/growth/spring-components' },
             { text: 'MQ&分布式锁技术选型横向对比', link: '/growth/mq-distributed-lock-technology-comparison' },
             { text: '超时&重复&慢怎么办', link: '/growth/timeout-duplicate-slow-questions' },
+            { text: '下游不确定接口如何快速失败', link: '/growth/downstream-fast-fail' },
             { text: '系统性能瓶颈与排查', link: '/growth/system-performance-bottlenecks' },
             { text: '高可用强一致性的设计思路', link: '/growth/high-availability-strong-consistency-design' },
             { text: 'Hikari 连接池与数据库连接数', link: '/growth/hikari-connection-pool' },
