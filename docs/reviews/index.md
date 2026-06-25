@@ -19,6 +19,7 @@
 - [复杂提货链路设计与排查复盘](/reviews/delivery-chain-review)
 - [业务路由系统设计复盘](/reviews/business-routing-review)
 - [多主体互转问题复盘](/reviews/main-relation-transfer-issue-review)
+- [大事务、幂等接口与提交后回查问题复盘](/reviews/transaction-idempotent-after-commit-review)
 - [Code Review 与验证闭环复盘](/reviews/code-review-and-verification)
 - [业务系统 Code Review 规范复盘](/reviews/code-review-business-boundary)
 - [AI 使用过程中常见的坑：从一次生产故障复盘说起](/reviews/ai-usage-pitfalls)

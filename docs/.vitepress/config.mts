@@ -150,6 +150,7 @@ export default defineConfig({
             { text: '复杂提货链路设计与排查复盘', link: '/reviews/delivery-chain-review' },
             { text: '业务路由系统设计复盘', link: '/reviews/business-routing-review' },
             { text: '多主体互转问题复盘', link: '/reviews/main-relation-transfer-issue-review' },
+            { text: '大事务、幂等接口与提交后回查问题复盘', link: '/reviews/transaction-idempotent-after-commit-review' },
             { text: 'Code Review 与验证闭环复盘', link: '/reviews/code-review-and-verification' },
             { text: '业务系统 Code Review 规范复盘', link: '/reviews/code-review-business-boundary' },
             { text: 'AI 使用过程中常见的坑：从一次生产故障复盘说起', link: '/reviews/ai-usage-pitfalls' }
